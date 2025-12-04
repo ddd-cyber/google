@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 网页代理工具</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .main { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: white;
+            color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #444;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .example-btn {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+        .example-btn:hover {
+            background: #edf2f7;
+        }
+        .iframe-container {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 5px;
+            background: white;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #90cdf4;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🌐 网页代理工具</h1>
+            <p>安全访问全球网站 | 输入任意网址通过代理访问</p>
+        </header>
+
+        <main class="main">
+            <div class="card">
+                <h2>🔗 代理访问</h2>
+                <input type="text" id="urlInput" 
+                       placeholder="输入完整网址，例如：https://www.google.com"
+                       value="https://www.google.com">
+                <button onclick="loadProxy()">🚀 立即访问</button>
+                
+                <h2>📱 常用网站</h2>
+                <button class="example-btn" onclick="loadExample('https://twitter.com')">Twitter</button>
+                <button class="example-btn" onclick="loadExample('https://www.youtube.com')">YouTube</button>
+                <button class="example-btn" onclick="loadExample('https://github.com')">GitHub</button>
+                <button class="example-btn" onclick="loadExample('https://www.reddit.com')">Reddit</button>
+                <button class="example-btn" onclick="loadExample('https://stackoverflow.com')">Stack Overflow</button>
+                <button class="example-btn" onclick="loadExample('https://www.wikipedia.org')">Wikipedia</button>
+            </div>
+
+            <div class="card">
+                <h2>📋 使用说明</h2>
+                <div style="line-height: 1.8;">
+                    <p><strong>✓ 使用方法：</strong></p>
+                    <ol style="padding-left: 20px; margin-bottom: 15px;">
+                        <li>输入完整网址（包含 https://）</li>
+                        <li>点击"立即访问"按钮</li>
+                        <li>或点击上方常用网站快速访问</li>
+                        <li>网站在右侧预览框中显示</li>
+                    </ol>
+                    
+                    <p><strong>⚠️ 注意事项：</strong></p>
+                    <ul style="padding-left: 20px; color: #666;">
+                        <li>某些网站可能因反爬虫机制无法访问</li>
+                        <li>请勿访问敏感网站（银行、支付等）</li>
+                        <li>视频和音频流可能无法正常工作</li>
+                        <li>登录状态可能无法保存</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="iframe-container card">
+                <h2>👁️ 网站预览</h2>
+                <iframe id="proxyFrame" title="代理网站预览"></iframe>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>⚠️ 免责声明：本工具仅供学习和研究使用。请遵守相关法律法规，尊重目标网站的服务条款。</p>
+            <p>遇到问题？请检查网址格式是否正确，或尝试其他网站。</p>
+        </footer>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const proxyFrame = document.getElementById('proxyFrame');
+        
+        // 初始加载Google
+        window.onload = function() {
+            loadExample('https://www.google.com');
+        };
+        
+        function loadProxy() {
+            let url = urlInput.value.trim();
+            if (!url) {
+                alert('请输入网址！');
+                urlInput.focus();
+                return;
+            }
+            
+            // 确保有协议头
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            
+            // 验证URL格式
+            try {
+                new URL(url);
+            } catch (error) {
+                alert('网址格式不正确！请输入有效的网址。\n例如：https://www.google.com');
+                return;
+            }
+            
+            // 更新iframe
+            const encodedUrl = encodeURIComponent(url);
+            proxyFrame.src = `/api/proxy?target=${encodedUrl}`;
+            urlInput.value = url;
+        }
+        
+        function loadExample(url) {
+            urlInput.value = url;
+            const encodedUrl = encodeURIComponent(url);
+            proxyFrame.src = `/api/proxy?target=${encodedUrl}`;
+        }
+        
+        // 按Enter键访问
+        urlInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                loadProxy();
+            }
+        });
+        
+        // 添加URL复制功能
+        function copyCurrentUrl() {
+            if (urlInput.value) {
+                navigator.clipboard.writeText(urlInput.value).then(function() {
+                    alert('网址已复制到剪贴板！');
+                });
+            }
+        }
+        
+        // 添加刷新功能
+        function refreshProxy() {
+            if (proxyFrame.src) {
+                proxyFrame.src = proxyFrame.src;
+            }
+        }
+        
+        // 添加快捷键
+        document.addEventListener('keydown', function(event) {
+            // F5 刷新
+            if (event.key === 'F5') {
+                event.preventDefault();
+                refreshProxy();
+            }
+            // Ctrl+L 聚焦输入框
+            if (event.ctrlKey && event.key === 'l') {
+                event.preventDefault();
+                urlInput.focus();
+                urlInput.select();
+            }
+        });
+    </script>
+</body>
+</html>

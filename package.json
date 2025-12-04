@@ -1,7 +1,8 @@
 {
-  "name": "simple-web-proxy",
+  "name": "static-proxy-app",
   "version": "1.0.0",
-  "description": "简单网页代理工具",
+  "description": "静态网站 + Node.js代理API",
+  "main": "api/proxy.js",
   "engines": {
     "node": "20.x"
   },
@@ -9,6 +10,8 @@
     "http-proxy-middleware": "2.0.6"
   },
   "scripts": {
-    "start": "node api/proxy.js"
-  }
+    "vercel-build": "echo 'Static site, no build required'"
+  },
+  "devDependencies": {},
+  "license": "MIT"
 }

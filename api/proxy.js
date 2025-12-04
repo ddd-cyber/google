@@ -1,6 +1,29 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = (req, res) => {
+    // 如果请求的是根路径，返回错误提示
+    if (req.url === '/' || req.url === '/index.html' || req.url === '') {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(`
+            <html>
+            <head>
+                <meta http-equiv="refresh" content="0; url=/" />
+                <title>重定向中...</title>
+            </head>
+            <body>
+                <p>请访问 <a href="/">首页</a></p>
+            </body>
+            </html>
+        `);
+        return;
+    }
+    
+    // ... 保留原有的代理逻辑
+    let target = 'https://www.google.com';
+    // ... 后面的代码保持不变
+    const { createProxyMiddleware } = require('http-proxy-middleware');
+
+module.exports = (req, res) => {
     // 从查询参数中获取目标URL
     const url = req.url || '';
     const queryIndex = url.indexOf('?');

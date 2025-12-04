@@ -1,5 +1,22 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
+module.exports = (req, res) => {
+    // 处理根路径请求 - 直接返回，让Vercel返回index.html
+    if (req.url === '/' || req.url === '/index.html') {
+        // 返回一个简单的重定向或让Vercel处理
+        res.writeHead(302, {
+            'Location': '/'
+        });
+        res.end();
+        return;
+    }
+    
+    // ... 原有的代理逻辑继续
+    let target = "https://www.google.com";
+    // ... 其他代码
+};
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
 // 通用的网络代理中间件
 const createUniversalProxy = (req, res) => {
     // 获取请求的原始URL

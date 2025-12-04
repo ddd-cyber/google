@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "通用网络代理工具",
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "dependencies": {
     "http-proxy-middleware": "^2.0.6"

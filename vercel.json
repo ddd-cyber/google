@@ -6,7 +6,6 @@
   },
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/api/proxy", "destination": "/api/proxy.js" },
-    { "source": "/(.*)", "destination": "/api/proxy" }
+    { "source": "/api/proxy", "destination": "/api/proxy.js" }
   ]
 }
